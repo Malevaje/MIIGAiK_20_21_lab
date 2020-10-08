@@ -75,6 +75,13 @@ def binding_to_a_pair_of_wall_signs(data):
     t_a, D = tan_alpha(data)
     alpha_stroke, alpha_3_2 = alpha(t_a)
     h1, h2, sin_delta_alpha = h1_h2_delta(data, D)
+    alpha_T1_T2 = radVgrad(((gradVrad(180 * 3600) - np.arctan(t_a)) + np.arcsin(sin_delta_alpha)))
+    alpha_2717_T2 = alpha_T1_T2 + grad_r_sek_list(data['beta_2'])
+    angel = sek_r_grad((180 * 3600) - (90 * 3600) - grad_r_sek_list(data['beta_1']))
+    print(angel)
+    alpha_3221_T1 = (radVgrad(np.arcsin(sin_delta_alpha)) + 90 * 3600 +
+                     ((180 * 3600) - (90 * 3600) - grad_r_sek_list(data['beta_1'])))
+
     result_of_calculation = {
         'tanα`_3221_2717': t_a,
         'α`_3221_2717': alpha_stroke,
@@ -83,6 +90,14 @@ def binding_to_a_pair_of_wall_signs(data):
         'h1': round(h1, 3),
         'h2': round(h2, 3),
         'sinδα': sin_delta_alpha,
+        'δα': sek_r_grad(radVgrad(np.arcsin(sin_delta_alpha))),
+        'α_T1_T2': sek_r_grad(alpha_T1_T2),
+        'α_2717_T2': sek_r_grad(alpha_2717_T2),
+        'α_3221_T1': sek_r_grad(alpha_3221_T1),
+        'X_T2': round(data['wall_sign_2']['x'] + data['D2'] * np.cos(gradVrad(alpha_2717_T2)), 3),
+        'Y_T2': round(data['wall_sign_2']['y'] + data['D2'] * np.sin(gradVrad(alpha_2717_T2)), 3),
+        'X_T1': round(data['wall_sign_1']['x'] + data['D1'] * np.cos(gradVrad(alpha_3221_T1)), 3),
+        'Y_T1': round(data['wall_sign_1']['y'] + data['D1'] * np.sin(gradVrad(alpha_3221_T1)), 3),
     }
 
     return result_of_calculation
@@ -93,3 +108,13 @@ if __name__ == '__main__':
     result = binding_to_a_pair_of_wall_signs(source_data)
     for i in result:
         print('{:15} : {}'.format(i, result[i]))
+
+    print('\n')
+    print('Control:')
+    print('{:15} : {:.3f}'.format('X_T2', result['X_T1']
+                                  + source_data['S_t1_t2'] *
+                                  np.cos(gradVrad(grad_r_sek_list(result['α_T1_T2'])))))
+    print('{:15} : {:.3f}'.format('Y_T2', result['Y_T1']
+                                  + source_data['S_t1_t2'] *
+                                  np.sin(gradVrad(grad_r_sek_list(result['α_T1_T2'])))))
+
