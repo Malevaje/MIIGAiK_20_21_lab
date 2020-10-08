@@ -52,7 +52,7 @@ def alpha(tg):
     :return: angle alpha_stroke and alpha.
     """
     alpha_stroke = sek_r_grad(radVgrad(np.arctan(tg)))
-    alpha_3_2 = sek_r_grad(radVgrad(gradVrad(180 * 3600) - np.arctan(tg)))
+    alpha_3_2 = sek_r_grad(radVgrad(gradVrad(360 * 3600) - np.arctan(tg)))
 
     return alpha_stroke, alpha_3_2
 
@@ -75,12 +75,12 @@ def binding_to_a_pair_of_wall_signs(data):
     t_a, D = tan_alpha(data)
     alpha_stroke, alpha_3_2 = alpha(t_a)
     h1, h2, sin_delta_alpha = h1_h2_delta(data, D)
-    alpha_T1_T2 = radVgrad(((gradVrad(180 * 3600) - np.arctan(t_a)) + np.arcsin(sin_delta_alpha)))
-    alpha_2717_T2 = alpha_T1_T2 + grad_r_sek_list(data['beta_2'])
-    angel = sek_r_grad((180 * 3600) - (90 * 3600) - grad_r_sek_list(data['beta_1']))
-    print(angel)
-    alpha_3221_T1 = (radVgrad(np.arcsin(sin_delta_alpha)) + 90 * 3600 +
-                     ((180 * 3600) - (90 * 3600) - grad_r_sek_list(data['beta_1'])))
+    alpha_T1_T2 = (grad_r_sek_list(alpha_3_2) + radVgrad(np.arcsin(sin_delta_alpha))) - 360 * 3600
+    alpha_2717_T2 = radVgrad(np.arcsin(sin_delta_alpha)) + grad_r_sek_list(data['beta_2'])\
+                    - grad_r_sek_list(alpha_stroke)
+    alpha_3221_T1 = radVgrad(np.arcsin(sin_delta_alpha)) - grad_r_sek_list(alpha_stroke) + (
+        180 * 3600 - grad_r_sek_list(data['beta_1'])
+    )
 
     result_of_calculation = {
         'tanα`_3221_2717': t_a,
